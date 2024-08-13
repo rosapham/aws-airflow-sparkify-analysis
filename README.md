@@ -75,3 +75,18 @@ aws s3 sync s3://udacity-dend/song-data/ s3://sparkify-lake-house/song-data/
 aws s3 cp s3://udacity-dend/log_json_path.json ~/
 aws s3 cp ~/log_json_path.json s3://sparkify-lake-house/
 ```
+
+6. Configure Variables in Airflow for S3
+
+<img src="images/airflow_variables.png">
+
+7. Configure the DAG with parameters and setup task dependencies
+
+- The DAG does not have dependencies on past runs
+- On failure, the task are retried 3 times
+- Retries happen every 5 minutes
+- Catchup is turned off
+- Do not email on retry
+- Run once an hour
+
+<img src="images/airflow_DAG.png">
