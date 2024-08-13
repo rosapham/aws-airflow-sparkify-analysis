@@ -90,3 +90,7 @@ aws s3 cp ~/log_json_path.json s3://sparkify-lake-house/
 - Run once an hour
 
 <img src="images/airflow_DAG.png">
+
+8. Build the operators
+
+- Stage Operator `stage_redshift.py` : The stage operator is expected to be able to load any JSON-formatted files from S3 to Amazon Redshift.
