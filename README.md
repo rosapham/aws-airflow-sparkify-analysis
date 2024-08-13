@@ -72,5 +72,6 @@ aws iam attach-role-policy --policy-arn arn:aws:iam::aws:policy/AmazonS3FullAcce
 ```bash
 aws s3 sync s3://udacity-dend/log-data/ s3://sparkify-lake-house/log-data/
 aws s3 sync s3://udacity-dend/song-data/ s3://sparkify-lake-house/song-data/
-aws s3 sync s3://udacity-dend/log_json_path.json s3://sparkify-lake-house/
+aws s3 cp s3://udacity-dend/log_json_path.json ~/
+aws s3 cp ~/log_json_path.json s3://sparkify-lake-house/
 ```
