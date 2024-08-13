@@ -56,9 +56,13 @@ def sparkify_project() -> None:
         create_sql=SqlQueries.staging_songs_table_create,
     )
 
-    # load_songplays_task = LoadFactOperator(
-    #     task_id="Load_songplays_fact_table",
-    # )
+    load_songplays_task = LoadFactOperator(
+        task_id="Load_songplays_fact_table",
+        table="songplays",
+        redshift_conn_id="redshift",
+        create_sql=SqlQueries.songplays_table_create,
+        insert_sql=SqlQueries.songplays_table_insert,
+    )
 
     # load_user_task = LoadDimensionOperator(
     #     task_id="Load_user_dim_table",
@@ -82,11 +86,11 @@ def sparkify_project() -> None:
 
     # end_task = DummyOperator(task_id="End_execution")
 
-    # (
-    #     begin_task
-    #     >> [stage_events_to_redshift_task, stage_songs_to_redshift_task]
-    #     >> load_songplays_task
-    # )
+    (
+        begin_task
+        >> [stage_events_to_redshift_task, stage_songs_to_redshift_task]
+        >> load_songplays_task
+    )
 
     # (
     #     load_songplays_task
@@ -98,9 +102,6 @@ def sparkify_project() -> None:
     #     ]
     #     >> data_quality_task
     # )
-
-    # data_quality_task >> end_task
-    begin_task >> [stage_events_to_redshift_task, stage_songs_to_redshift_task]
 
 
 final_project_dag = sparkify_project()
