@@ -16,7 +16,7 @@ class LoadFactOperator(BaseOperator):
         table: str = "",
         create_sql: str = "",
         insert_sql: str = "",
-        mode: str = "append",
+        is_appending: bool = True,
         *args: Any,
         **kwargs: Any,
     ) -> None:
@@ -26,21 +26,21 @@ class LoadFactOperator(BaseOperator):
         self.table = table
         self.create_sql = create_sql
         self.insert_sql = insert_sql
-        self.mode = mode
+        self.is_appending = is_appending
 
     def execute(self: Any, context: Any) -> None:
         # Create connections to redshift
         redshift = PostgresHook(postgres_conn_id=self.redshift_conn_id)
 
-        # Fact tables are usually so massive that they should only allow append type functionality
-        if self.mode != "append":
-            self.log.info(f"Truncating the fact table: {self.table}")
-            redshift.run(f"TRUNCATE TABLE {self.table}")
-
         # Create the fact table if not existed in Redshift
         self.log.info("Creating the fact table in Redshift")
         self.log.info(self.create_sql)
         redshift.run(self.create_sql)
+
+        # Fact tables are usually so massive that they should only allow append type functionality
+        if not self.is_appending:
+            self.log.info(f"Truncating the fact table: {self.table}")
+            redshift.run(f"TRUNCATE TABLE {self.table}")
 
         # Insert data into the fact table
         self.log.info("Inserting data into the fact table")
