@@ -60,25 +60,46 @@ def sparkify_project() -> None:
         task_id="Load_songplays_fact_table",
         table="songplays",
         redshift_conn_id="redshift",
+        is_appending=True,
         create_sql=SqlQueries.songplays_table_create,
         insert_sql=SqlQueries.songplays_table_insert,
     )
 
-    # load_user_task = LoadDimensionOperator(
-    #     task_id="Load_user_dim_table",
-    # )
+    load_user_task = LoadDimensionOperator(
+        task_id="Load_user_dim_table",
+        table="users",
+        redshift_conn_id="redshift",
+        create_sql=SqlQueries.users_table_create,
+        insert_sql=SqlQueries.users_table_insert,
+        is_truncating=True,
+    )
 
-    # load_songs_task = LoadDimensionOperator(
-    #     task_id="Load_song_dim_table",
-    # )
+    load_songs_task = LoadDimensionOperator(
+        task_id="Load_song_dim_table",
+        table="songs",
+        redshift_conn_id="redshift",
+        create_sql=SqlQueries.songs_table_create,
+        insert_sql=SqlQueries.songs_table_insert,
+        is_truncating=True,
+    )
 
-    # load_artist_task = LoadDimensionOperator(
-    #     task_id="Load_artist_dim_table",
-    # )
+    load_artist_task = LoadDimensionOperator(
+        task_id="Load_artist_dim_table",
+        table="artists",
+        redshift_conn_id="redshift",
+        create_sql=SqlQueries.artists_table_create,
+        insert_sql=SqlQueries.artists_table_insert,
+        is_truncating=True,
+    )
 
-    # load_time_task = LoadDimensionOperator(
-    #     task_id="Load_time_dim_table",
-    # )
+    load_time_task = LoadDimensionOperator(
+        task_id="Load_time_dim_table",
+        table="time",
+        redshift_conn_id="redshift",
+        create_sql=SqlQueries.time_table_create,
+        insert_sql=SqlQueries.time_table_insert,
+        is_truncating=True,
+    )
 
     # data_quality_task = DataQualityOperator(
     #     task_id="Run_data_quality_checks",
@@ -92,16 +113,16 @@ def sparkify_project() -> None:
         >> load_songplays_task
     )
 
-    # (
-    #     load_songplays_task
-    #     >> [
-    #         load_user_task,
-    #         load_songs_task,
-    #         load_artist_task,
-    #         load_time_task,
-    #     ]
-    #     >> data_quality_task
-    # )
+    (
+        load_songplays_task
+        >> [
+            load_user_task,
+            load_songs_task,
+            load_artist_task,
+            load_time_task,
+        ]
+        # >> data_quality_task
+    )
 
 
 final_project_dag = sparkify_project()
