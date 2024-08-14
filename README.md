@@ -8,8 +8,6 @@ They have decided to bring you into the project and expect you to create high gr
 
 The source data resides in S3 and needs to be processed in Sparkify's data warehouse in Amazon Redshift. The source datasets consist of JSON logs that tell about user activity in the application and JSON metadata about the songs the users listen to.
 
-<img src="images/DAG_flow.png">
-
 ## Dataset
 
 - Log data: s3://udacity-dend/log-data
@@ -27,7 +25,7 @@ The source data resides in S3 and needs to be processed in Sparkify's data wareh
 
 2.  Connect Airflow and AWS.
 
-<img src="images/airflow_aws_connection.png">
+<img src="images/airflow_aws_connection.png" width="70%">
 
 3. Configure Redshift Serverless in AWS.
 
@@ -58,11 +56,11 @@ aws iam attach-role-policy --policy-arn arn:aws:iam::aws:policy/AmazonS3FullAcce
 - Turn on Publicly accessible for Redshift Workgroup and Redshift Cluster
 - Add more inbound rule for the VPC security group in Redshift Workgroup.
 
-<img src="images/vpc_inbound_rule.png">
+<img src="images/vpc_inbound_rule.png" width="70%">
 
 4. Connect Airflow to AWS Redshift Serverless
 
-<img src="images/airflow_redshift_connection.png">
+<img src="images/airflow_redshift_connection.png" width="70%">
 
 5. Copy S3 data
    The data for the project is stored in Udacity's S3 bucket. This bucket is in the US West AWS Region. To simplify things, we will copy the data to your bucket in the same AWS Region where you created the Redshift workgroup so that Redshift can access the bucket.
@@ -78,7 +76,7 @@ aws s3 cp ~/log_json_path.json s3://sparkify-lake-house/
 
 6. Configure Variables in Airflow for S3
 
-<img src="images/airflow_variables.png">
+<img src="images/airflow_variables.png" width="70%">
 
 7. Configure the DAG with parameters and setup task dependencies
 
@@ -89,8 +87,20 @@ aws s3 cp ~/log_json_path.json s3://sparkify-lake-house/
 - Do not email on retry
 - Run once an hour
 
-<img src="images/airflow_DAG.png">
+<img src="images/airflow_DAG.png" width="70%">
 
 8. Build the operators
 
 - Stage Operator `stage_redshift.py` : The stage operator is expected to be able to load any JSON-formatted files from S3 to Amazon Redshift.
+- Fact and Dimension Operators `load_fact.py` and `load_dimension.py` : ost of the logic is within the SQL transformations, and the operator is expected to take as input a SQL statement and target database on which to run the query against.
+- Data Quality Operator `data_quality.py` : The operator's main functionality is to receive one or more SQL based test cases along with the expected results and execute the tests.
+
+## Results
+
+1. Data is loaded into songplays fact table
+
+<img src="images/songplays_table.png" width="70%">
+
+2. The DAG is success for all tasks
+
+<img src="images/sparkify_DAG_success.png" width="70%">
