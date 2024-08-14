@@ -74,8 +74,6 @@ class SqlQueries:
             WHERE page='NextSong') se
         JOIN staging_songs ss
         ON se.song = ss.title AND se.artist = ss.artist_name AND se.length = ss.duration
-        WHERE se.userId IS NOT NULL AND ss.song_id IS NOT NULL
-            AND ss.artist_id IS NOT NULL AND se.ts IS NOT NULL
     """
 
     # Create users table
@@ -115,7 +113,7 @@ class SqlQueries:
     """
 
     # Insert values from staging_songs into songs table
-    songs_table_insert = """    
+    songs_table_insert = """
         INSERT INTO songs (songid, title, artistid, year, duration)
             SELECT DISTINCT song_id as songid,
                     title,

@@ -22,8 +22,8 @@ default_args = {
     "owner": "rosapham",
     "start_date": pendulum.now(),
     "depends_on_past": False,
-    # "retries": 3,
-    # "retry_delay": duration(minutes=5),
+    "retries": 3,
+    "retry_delay": duration(minutes=5),
     "catchup": False,
     "email_on_retry": False,
     "schedule_interval": "@hourly",
@@ -101,11 +101,14 @@ def sparkify_project() -> None:
         is_truncating=True,
     )
 
-    # data_quality_task = DataQualityOperator(
-    #     task_id="Run_data_quality_checks",
-    # )
+    data_quality_task = DataQualityOperator(
+        task_id="Run_data_quality_checks",
+        redshift_conn_id="redshift",
+        tables=["songplays", "users", "songs", "artists", "time"],
+        entities={"songplays": "userid"},
+    )
 
-    # end_task = DummyOperator(task_id="End_execution")
+    end_task = DummyOperator(task_id="End_execution")
 
     (
         begin_task
@@ -121,7 +124,8 @@ def sparkify_project() -> None:
             load_artist_task,
             load_time_task,
         ]
-        # >> data_quality_task
+        >> data_quality_task
+        >> end_task
     )
 
 
