@@ -22,7 +22,7 @@ The source data resides in S3 and needs to be processed in Sparkify's data wareh
 
 <img src="images/star_schema.png" width="70%">
 
-## Project Configuration
+## Project Workflow
 
 1. <b>Create an IAM User in AWS</b>
 
