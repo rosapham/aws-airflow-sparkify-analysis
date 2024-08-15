@@ -2,11 +2,15 @@
 
 ## Overview
 
-A music streaming company, Sparkify, has decided that it is time to introduce more automation and monitoring to their data warehouse ETL pipelines and come to the conclusion that the best tool to achieve this is Apache Airflow.
+Sparkify, a music streaming company, has decided to enhance automation and monitoring within their data warehouse ETL pipelines. After careful consideration, they have chosen Apache Airflow as the ideal tool for the job.
 
-They have decided to bring you into the project and expect you to create high grade data pipelines that are dynamic and built from reusable tasks, can be monitored, and allow easy backfills. They have also noted that the data quality plays a big part when analyses are executed on top the data warehouse and want to run tests against their datasets after the ETL steps have been executed to catch any discrepancies in the datasets.
+Sparkify has enlisted expertise to develop robust data pipelines that are dynamic, composed of reusable tasks, and designed for easy monitoring and backfilling. Additionally, Sparkify places a high priority on data quality, requiring the implementation of tests on their datasets post-ETL to identify any discrepancies.
 
 The source data resides in S3 and needs to be processed in Sparkify's data warehouse in Amazon Redshift. The source datasets consist of JSON logs that tell about user activity in the application and JSON metadata about the songs the users listen to.
+
+## System Architecture
+
+<img src="images/system_architecture.png" width="70%">
 
 ## Dataset
 
@@ -14,20 +18,25 @@ The source data resides in S3 and needs to be processed in Sparkify's data wareh
 - Song data: s3://udacity-dend/song-data
 - Log path: s3://udacity-dend/log_json_path.json
 
-## Project Steps
+## Star Schema design
 
-1. Create an IAM User in AWS.
-   Set permissions to this user:
+<img src="images/star_schema.png" width="70%">
+
+## Project Configuration
+
+1. <b>Create an IAM User in AWS</b>
+
+Set permissions to this user:
 
 - AdministratorAccess
 - AmazonRedshiftFullAccess
 - AmazonS3FullAccess
 
-2.  Connect Airflow and AWS.
+2. <b>Connect Airflow and AWS</b>
 
 <img src="images/airflow_aws_connection.png" width="70%">
 
-3. Configure Redshift Serverless in AWS.
+3. <b>Configure Redshift Serverless in AWS</b>
 
 - Create Redshift Role in AWS Console
 
@@ -58,11 +67,12 @@ aws iam attach-role-policy --policy-arn arn:aws:iam::aws:policy/AmazonS3FullAcce
 
 <img src="images/vpc_inbound_rule.png" width="70%">
 
-4. Connect Airflow to AWS Redshift Serverless
+4. <b>Connect Airflow to AWS Redshift Serverless</b>
 
 <img src="images/airflow_redshift_connection.png" width="70%">
 
-5. Copy S3 data
+5. <b>Copy S3 data</b>
+
    The data for the project is stored in Udacity's S3 bucket. This bucket is in the US West AWS Region. To simplify things, we will copy the data to your bucket in the same AWS Region where you created the Redshift workgroup so that Redshift can access the bucket.
 
 - Copy the data from the udacity bucket to our bucket:
@@ -74,11 +84,11 @@ aws s3 cp s3://udacity-dend/log_json_path.json ~/
 aws s3 cp ~/log_json_path.json s3://sparkify-lake-house/
 ```
 
-6. Configure Variables in Airflow for S3
+6. <b>Configure Variables in Airflow for S3</b>
 
 <img src="images/airflow_variables.png" width="70%">
 
-7. Configure the DAG with parameters and setup task dependencies
+7. <b>Configure the DAG with parameters and setup task dependencies</b>
 
 - The DAG does not have dependencies on past runs
 - On failure, the task are retried 3 times
@@ -89,18 +99,18 @@ aws s3 cp ~/log_json_path.json s3://sparkify-lake-house/
 
 <img src="images/airflow_DAG.png" width="70%">
 
-8. Build the operators
+8. <b>Build the operators</b>
 
 - Stage Operator `stage_redshift.py` : The stage operator is expected to be able to load any JSON-formatted files from S3 to Amazon Redshift.
 - Fact and Dimension Operators `load_fact.py` and `load_dimension.py` : ost of the logic is within the SQL transformations, and the operator is expected to take as input a SQL statement and target database on which to run the query against.
-- Data Quality Operator `data_quality.py` : The operator's main functionality is to receive one or more SQL based test cases along with the expected results and execute the tests.
+- Data Quality Operator `data_quality.py` : The operator's main functionality is to receive SQL based test cases along with the expected results and execute the tests.
 
 ## Results
 
-1. Data is loaded into songplays fact table
+1. <b>Data is loaded into songplays fact table</b>
 
 <img src="images/songplays_table.png" width="70%">
 
-2. The DAG is success for all tasks
+2. <b>The DAG is success for all tasks</b>
 
 <img src="images/sparkify_DAG_success.png" width="70%">
